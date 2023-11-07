@@ -11,6 +11,7 @@ public sealed class TestLinuxTask : FrostingTask<BuildContext>
         "libc.so",
         "libm.so",
         "libdl.so",
+        "libpthread.so",
         "/lib/ld-linux-",
         "/lib64/ld-linux-"
     };

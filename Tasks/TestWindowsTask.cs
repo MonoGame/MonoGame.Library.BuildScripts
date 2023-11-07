@@ -8,6 +8,16 @@ public sealed class TestWindowsTask : FrostingTask<BuildContext>
     private static readonly string[] ValidLibs = {
         "WS2_32.dll",
         "KERNEL32.dll"
+        "USER32.dll",
+        "GDI32.dll",
+        "WINMM.dll",
+        "IMM32.dll",
+        "ole32.dll",
+        "OLEAUT32.dll",
+        "VERSION.dll",
+        "ADVAPI32.dll",
+        "SETUPAPI.dll",
+        "SHELL32.dll"
     };
 
     public override bool ShouldRun(BuildContext context) => context.IsRunningOnWindows();
