@@ -33,7 +33,7 @@ public sealed class TestWindowsTask : FrostingTask<BuildContext>
             foreach (string output in processOutput)
             {
                 var libPath = output.Trim();
-                if (!libPath.EndsWith(".dll"))
+                if (!libPath.EndsWith(".dll") || libPath.Contains(' '))
                     continue;
                 context.Information($"DEP: {libPath}");
                 if (ValidLibs.Contains(libPath))
