@@ -7,7 +7,7 @@ public sealed class TestWindowsTask : FrostingTask<BuildContext>
 {
     private static readonly string[] ValidLibs = {
         "WS2_32.dll",
-        "KERNEL32.dll"
+        "KERNEL32.dll",
         "USER32.dll",
         "GDI32.dll",
         "WINMM.dll",
