@@ -7,9 +7,12 @@ public class BuildContext : FrostingContext
 
     public PackContext PackContext { get; }
 
+    public bool IsUniversalBinary { get; }
+
     public BuildContext(ICakeContext context) : base(context)
     {
         ArtifactsDir = context.Arguments("artifactsDir", "artifacts").FirstOrDefault()!;
+        IsUniversalBinary = context.Arguments("universalBinary", false).FirstOrDefault();
         PackContext = new PackContext(context);
 
         if (context.BuildSystem().IsRunningOnGitHubActions &&

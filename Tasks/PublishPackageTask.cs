@@ -24,12 +24,19 @@ public sealed class PublishPackageTask : AsyncFrostingTask<BuildContext>
 
     public override async Task RunAsync(BuildContext context)
     {
-        var requiredRids = new[] {
-            "windows-x64",
-            "osx-x64",
-            "osx-arm64",
-            "linux-x64"
-        };
+        var requiredRids = context.IsUniversalBinary ?
+            new string[]
+            {
+                "windows-x64",
+                "linux-x64",
+                "osx"
+            } 
+            : new string[] {
+                "windows-x64",
+                "linux-x64",
+                "osx-x64",
+                "osx-arm64"
+            };
 
         // Download built artifacts
         if (context.BuildSystem().IsRunningOnGitHubActions)
