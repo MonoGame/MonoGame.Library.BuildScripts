@@ -23,9 +23,15 @@ public sealed class TestMacOSTask : FrostingTask<BuildContext>
             var processOutputList = processOutput.ToList();
             for (int i = 3; i < processOutputList.Count; i++)
             {
-                var libPath = processOutputList[i].Trim();
+                var libPath = processOutputList[i].Trim().Split(' ')[^1];
+                if (libPath.Contains('['))
+                {
+                    i += 2;
+                    continue;
+                }
+
                 context.Information($"DEP: {libPath}");
-                if (libPath.StartsWith("/usr/lib/"))
+                if (libPath.StartsWith("/usr/lib/") || libPath.StartsWith("/System/Library/Frameworks/"))
                     continue;
 
                 throw new Exception($"Found a dynamic library ref: {libPath}");
