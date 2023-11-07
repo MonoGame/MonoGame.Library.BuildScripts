@@ -17,7 +17,7 @@ public sealed class TestWindowsTask : FrostingTask<BuildContext>
         var vswhere = new VSWhereLatest(context.FileSystem, context.Environment, context.ProcessRunner, context.Tools);
         var devcmdPath = vswhere.Latest(new VSWhereLatestSettings()).FullPath + @"\Common7\Tools\vsdevcmd.bat";
 
-        foreach (var filePath in context.GetFiles(context.ArtifactsDir))
+        foreach (var filePath in Directory.GetFiles(context.ArtifactsDir))
         {
             context.Information($"Checking: {filePath}");
             context.StartProcess(

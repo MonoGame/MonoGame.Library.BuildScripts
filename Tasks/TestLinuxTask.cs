@@ -18,7 +18,7 @@ public sealed class TestLinuxTask : FrostingTask<BuildContext>
 
     public override void Run(BuildContext context)
     {
-        foreach (var filePath in context.GetFiles(context.ArtifactsDir))
+        foreach (var filePath in Directory.GetFiles(context.ArtifactsDir))
         {
             context.Information($"Checking: {filePath}");
             context.StartProcess(
