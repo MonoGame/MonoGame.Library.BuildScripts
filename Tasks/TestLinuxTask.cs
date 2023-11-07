@@ -10,6 +10,7 @@ public sealed class TestLinuxTask : FrostingTask<BuildContext>
         "libgcc_s.so",
         "libc.so",
         "libm.so",
+        "libdl.so",
         "/lib/ld-linux-",
         "/lib64/ld-linux-"
     };
