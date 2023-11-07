@@ -12,7 +12,8 @@ public class BuildContext : FrostingContext
         ArtifactsDir = context.Arguments("artifactsDir", "artifacts").FirstOrDefault()!;
         PackContext = new PackContext(context);
 
-        if (context.BuildSystem().IsRunningOnGitHubActions)
+        if (context.BuildSystem().IsRunningOnGitHubActions &&
+            !string.IsNullOrEmpty(context.EnvironmentVariable("GITHUB_TOKEN")))
         {
             context.BuildSystem().GitHubActions.Commands.SetSecret(context.EnvironmentVariable("GITHUB_TOKEN"));
         }
