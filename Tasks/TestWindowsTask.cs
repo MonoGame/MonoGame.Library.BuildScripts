@@ -30,16 +30,27 @@ public sealed class TestWindowsTask : FrostingTask<BuildContext>
                 out IEnumerable<string> processOutput
             );
 
+            var passedTests = true;
             foreach (string output in processOutput)
             {
                 var libPath = output.Trim();
                 if (!libPath.EndsWith(".dll") || libPath.Contains(' '))
                     continue;
-                context.Information($"DEP: {libPath}");
+                    
                 if (ValidLibs.Contains(libPath))
-                    continue;
+                {
+                    context.Information($"VALID: {libPath}");
+                }
+                else
+                {
+                    context.Information($"INVALID: {libPath}");
+                    passedTests = false;
+                }
+            }
 
-                throw new Exception($"Found a dynamic library ref: {libPath}");
+            if (!passedTests)
+            {
+                throw new Exception("Invalid library linkage detected!");
             }
         }
     }

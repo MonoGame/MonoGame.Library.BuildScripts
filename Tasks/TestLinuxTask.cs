@@ -31,10 +31,10 @@ public sealed class TestLinuxTask : FrostingTask<BuildContext>
                 },
                 out IEnumerable<string> processOutput);
 
+            var passedTests = true;
             foreach (var line in processOutput)
             {
                 var libPath = line.Trim().Split(' ')[0];
-                context.Information($"DEP: {libPath}");
 
                 var isValidLib = false;
                 foreach (var validLib in ValidLibs)
@@ -46,8 +46,20 @@ public sealed class TestLinuxTask : FrostingTask<BuildContext>
                     }
                 }
 
-                if (!isValidLib)
-                    throw new Exception($"Found a dynamic library ref: {libPath}");
+                if (isValidLib)
+                {
+                    context.Information($"VALID: {libPath}");
+                }
+                else
+                {
+                    context.Information($"INVALID: {libPath}");
+                    passedTests = false;
+                }
+            }
+
+            if (!passedTests)
+            {
+                throw new Exception("Invalid library linkage detected!");
             }
 
             context.Information("");

@@ -21,6 +21,7 @@ public sealed class TestMacOSTask : FrostingTask<BuildContext>
                 out IEnumerable<string> processOutput);
 
             var processOutputList = processOutput.ToList();
+            var passedTests = true;
             for (int i = 3; i < processOutputList.Count; i++)
             {
                 var libPath = processOutputList[i].Trim().Split(' ')[^1];
@@ -30,11 +31,20 @@ public sealed class TestMacOSTask : FrostingTask<BuildContext>
                     continue;
                 }
 
-                context.Information($"DEP: {libPath}");
                 if (libPath.StartsWith("/usr/lib/") || libPath.StartsWith("/System/Library/Frameworks/"))
-                    continue;
+                {
+                    context.Information($"VALID: {libPath}");
+                }
+                else
+                {
+                    context.Information($"INVALID: {libPath}");
+                    passedTests = false;
+                }
+            }
 
-                throw new Exception($"Found a dynamic library ref: {libPath}");
+            if (!passedTests)
+            {
+                throw new Exception("Invalid library linkage detected!");
             }
 
             context.Information("");
