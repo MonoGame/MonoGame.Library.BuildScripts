@@ -33,11 +33,11 @@ public sealed class TestMacOSTask : FrostingTask<BuildContext>
 
                 if (libPath.StartsWith("/usr/lib/") || libPath.StartsWith("/System/Library/Frameworks/"))
                 {
-                    context.Information($"VALID: {libPath}");
+                    context.Information($"VALID linkage: {libPath}");
                 }
                 else
                 {
-                    context.Information($"INVALID: {libPath}");
+                    context.Information($"INVALID linkage: {libPath}");
                     passedTests = false;
                 }
             }
@@ -45,6 +45,45 @@ public sealed class TestMacOSTask : FrostingTask<BuildContext>
             if (!passedTests)
             {
                 throw new Exception("Invalid library linkage detected!");
+            }
+
+            // check if correct architectures are supported
+            context.StartProcess(
+                "file",
+                new ProcessSettings
+                {
+                    RedirectStandardOutput = true
+                },
+                out processOutput);
+
+            bool x86_64 = false;
+            bool arm64 = false;
+
+            processOutputList = processOutput.ToList();
+
+            for (int i = 0; i < processOutputList.Count; i++)
+            {
+                var architecture = processOutputList[i];
+                if (architecture.Contains("x86_64"))
+                    x86_64 = true;
+                else if (architecture.Contains("arm64"))
+                    arm64 = true;
+            }
+
+            if (x86_64)
+            {
+                context.Information($"ARCHITECTURE: x86_64");
+            }
+
+            if (arm64)
+            {
+                context.Information($"ARCHITECTURE: arm64");
+            }
+
+            if (context.IsUniversalBinary && !(arm64 && x86_64))
+            {
+                context.Information($"INVALID universal binary");
+                throw new Exception("An universal binary hasn't been generated!");
             }
 
             context.Information("");
