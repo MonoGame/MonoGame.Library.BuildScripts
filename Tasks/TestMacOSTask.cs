@@ -52,6 +52,7 @@ public sealed class TestMacOSTask : FrostingTask<BuildContext>
                 "file",
                 new ProcessSettings
                 {
+                    Arguments = filePath,
                     RedirectStandardOutput = true
                 },
                 out processOutput);
