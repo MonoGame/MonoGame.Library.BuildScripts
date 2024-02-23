@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-      <None Include="{LicencePath}" Pack="true" PackagePath="{LicenceName}" />
+      <None Include="{LicencePath}" Pack="true" PackagePath="{LicencePackagePath}" />
   </ItemGroup>
 
   <ItemGroup>
