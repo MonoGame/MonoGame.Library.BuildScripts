@@ -58,11 +58,12 @@ public sealed class PublishPackageTask : AsyncFrostingTask<BuildContext>
         projectData = projectData.Replace("{LicencePath}", context.PackContext.LicensePath);
 
         if (context.PackContext.LicensePath.EndsWith(".txt"))
-            projectData = projectData.Replace("{LicenceName}", "LICENSE.txt");
+            projectData = projectData.Replace("{LicenceName}", "LICENSE.txt").Replace("{LicencePackagePath}", "LICENSE.txt");
         else if (context.PackContext.LicensePath.EndsWith(".md"))
-            projectData = projectData.Replace("{LicenceName}", "LICENSE.md");
+            projectData = projectData.Replace("{LicenceName}", "LICENSE.md").Replace("{LicencePackagePath}", "LICENSE.md");
         else
-            projectData = projectData.Replace("{LicenceName}", "LICENSE");
+            // https://learn.microsoft.com/en-us/nuget/reference/errors-and-warnings/nu5030#issue
+            projectData = projectData.Replace("{LicenceName}", "LICENSE").Replace("{LicencePackagePath}", "");
 
         var librariesToInclude = from rid in requiredRids from filePath in Directory.GetFiles($"runtimes/{rid}/native")
             select $"<Content Include=\"{filePath}\"><PackagePath>runtimes/{rid}/native</PackagePath></Content>";
