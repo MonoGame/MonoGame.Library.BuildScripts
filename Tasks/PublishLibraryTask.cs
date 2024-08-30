@@ -24,23 +24,6 @@ public sealed class PublishLibraryTask : AsyncFrostingTask<BuildContext>
             "android-x64"
         };
         var availableRids = new List<string> ();
-        // var rid = "";
-        // if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        //     rid = "windows";
-        // else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-        //     rid = "osx";
-        // else
-        //     rid = "linux";
-
-        // if (!(RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && context.IsUniversalBinary))
-        // {
-        //     rid += RuntimeInformation.ProcessArchitecture switch
-        //     {
-        //         Architecture.Arm or Architecture.Arm64 => "-arm64",
-        //         _ => "-x64",
-        //     };
-        // }
-        // availableRids.Add (rid);
 
         foreach (var knownRid in knownRids) {
             if (context.DirectoryExists ($"{context.ArtifactsDir}/{knownRid}")) {
