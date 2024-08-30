@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace BuildScripts;
 
@@ -10,23 +11,44 @@ public sealed class PublishLibraryTask : AsyncFrostingTask<BuildContext>
 
     public override async Task RunAsync(BuildContext context)
     {
-        var rid = "";
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            rid = "windows";
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            rid = "osx";
-        else
-            rid = "linux";
+        var knownRids = new string[] {
+            "windows-x64",
+            "linux-x64",
+            "osx",
+            "osx-x64",
+            "osx-arm64",
+            "ios",
+            "android-arm64",
+            "android-arm",
+            "android-x86",
+            "android-x64"
+        };
+        var availableRids = new List<string> ();
+        // var rid = "";
+        // if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        //     rid = "windows";
+        // else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        //     rid = "osx";
+        // else
+        //     rid = "linux";
 
-        if (!(RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && context.IsUniversalBinary))
-        {
-            rid += RuntimeInformation.ProcessArchitecture switch
-            {
-                Architecture.Arm or Architecture.Arm64 => "-arm64",
-                _ => "-x64",
-            };
+        // if (!(RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && context.IsUniversalBinary))
+        // {
+        //     rid += RuntimeInformation.ProcessArchitecture switch
+        //     {
+        //         Architecture.Arm or Architecture.Arm64 => "-arm64",
+        //         _ => "-x64",
+        //     };
+        // }
+        // availableRids.Add (rid);
+
+        foreach (var knownRid in knownRids) {
+            if (context.DirectoryExists ($"{context.ArtifactsDir}/{knownRid}")) {
+                availableRids.Add (knownRid);
+            }
         }
 
-        await context.BuildSystem().GitHubActions.Commands.UploadArtifact(DirectoryPath.FromString(context.ArtifactsDir), $"artifacts-{rid}");
+        foreach (var rid in availableRids)
+            await context.BuildSystem().GitHubActions.Commands.UploadArtifact(DirectoryPath.FromString(context.ArtifactsDir), $"artifacts-{rid}");
     }
 }

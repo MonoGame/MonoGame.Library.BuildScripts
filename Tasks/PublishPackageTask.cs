@@ -29,7 +29,7 @@ public sealed class PublishPackageTask : AsyncFrostingTask<BuildContext>
             {
                 "windows-x64",
                 "linux-x64",
-                "osx"
+                "osx",
             } 
             : new string[] {
                 "windows-x64",
@@ -37,8 +37,16 @@ public sealed class PublishPackageTask : AsyncFrostingTask<BuildContext>
                 "osx-x64",
                 "osx-arm64"
             };
+        var optionalRids = new string[] {
+                "ios",
+                "android-arm64",
+                "android-arm",
+                "android-x86",
+                "android-x64"
+        };
 
         // Download built artifacts
+        var downloadedRids = new List<string>();
         if (context.BuildSystem().IsRunningOnGitHubActions)
         {
             foreach (var rid in requiredRids)
@@ -49,6 +57,22 @@ public sealed class PublishPackageTask : AsyncFrostingTask<BuildContext>
 
                 context.CreateDirectory(directoryPath);
                 await context.BuildSystem().GitHubActions.Commands.DownloadArtifact($"artifacts-{rid}", directoryPath);
+                downloadedRids.Add (rid);
+            }
+            foreach (var rid in optionalRids)
+            {
+                var directoryPath = $"runtimes/{rid}/native";
+                if (context.DirectoryExists(directoryPath))
+                    continue;
+
+                context.CreateDirectory(directoryPath);
+                try {
+                    await context.BuildSystem().GitHubActions.Commands.DownloadArtifact($"artifacts-{rid}", directoryPath);
+                    downloadedRids.Add (rid);
+                } catch {
+                    // Rid not available, remove the directory.
+                    context.DeleteDirectory (directoryPath,new DeleteDirectorySettings () { Recursive = true, Force = true});
+                }
             }
         }
 
@@ -65,7 +89,7 @@ public sealed class PublishPackageTask : AsyncFrostingTask<BuildContext>
             // https://learn.microsoft.com/en-us/nuget/reference/errors-and-warnings/nu5030#issue
             projectData = projectData.Replace("{LicenceName}", "LICENSE").Replace("{LicencePackagePath}", "");
 
-        var librariesToInclude = from rid in requiredRids from filePath in Directory.GetFiles($"runtimes/{rid}/native")
+        var librariesToInclude = from rid in downloadedRids from filePath in Directory.GetFiles($"runtimes/{rid}/native")
             select $"<Content Include=\"{filePath}\"><PackagePath>runtimes/{rid}/native</PackagePath></Content>";
         projectData = projectData.Replace("{LibrariesToInclude}", string.Join(Environment.NewLine, librariesToInclude));
 
