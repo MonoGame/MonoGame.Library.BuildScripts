@@ -33,5 +33,22 @@ public sealed class PublishLibraryTask : AsyncFrostingTask<BuildContext>
 
         foreach (var rid in availableRids)
             await context.BuildSystem().GitHubActions.Commands.UploadArtifact(DirectoryPath.FromString(context.ArtifactsDir), $"artifacts-{rid}");
+
+        var rid = "";
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            rid = "windows";
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            rid = "osx";
+        else
+            rid = "linux";
+        if (!(RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && context.IsUniversalBinary))
+        {
+            rid += RuntimeInformation.ProcessArchitecture switch
+            {
+                Architecture.Arm or Architecture.Arm64 => "-arm64",
+                _ => "-x64",
+            };
+        }
+        await context.BuildSystem().GitHubActions.Commands.UploadArtifact(DirectoryPath.FromString(context.ArtifactsDir), $"artifacts-{rid}");
     }
 }
