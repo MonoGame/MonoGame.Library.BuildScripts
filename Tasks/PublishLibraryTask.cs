@@ -32,7 +32,7 @@ public sealed class PublishLibraryTask : AsyncFrostingTask<BuildContext>
         }
 
         foreach (var r in availableRids)
-            await context.BuildSystem().GitHubActions.Commands.UploadArtifact(DirectoryPath.FromString(context.ArtifactsDir), $"artifacts-{r}");
+            await context.BuildSystem().GitHubActions.Commands.UploadArtifact(DirectoryPath.FromString($"{context.ArtifactsDir}/{r}")), $"artifacts-{r}");
 
         if (availableRids.Any ())
             return;
