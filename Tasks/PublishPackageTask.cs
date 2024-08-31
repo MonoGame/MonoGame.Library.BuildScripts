@@ -94,7 +94,7 @@ public sealed class PublishPackageTask : AsyncFrostingTask<BuildContext>
         var projectData = await ReadEmbeddedResourceAsync("MonoGame.Library.X.txt");
         projectData = projectData.Replace("{X}", context.PackContext.LibraryName)
                                  .Replace("{Description}", description)
-                                 .Replace("{LicensePath}", context.PackContext.LicensePath)
+                                 .Replace("{LicensePath}", licensePath)
                                  .Replace("{ReadMePath}", readMeName)
                                  .Replace("{LicenseName}", licenseName)
                                  .Replace("{ReadMeName}", readMeName)
