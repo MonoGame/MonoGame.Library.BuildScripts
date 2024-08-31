@@ -13,6 +13,7 @@
 
   <ItemGroup>
       <None Include="{LicencePath}" Pack="true" PackagePath="{LicencePackagePath}" />
+      <None Include="{ReadMePath}" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>

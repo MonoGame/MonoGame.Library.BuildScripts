@@ -76,24 +76,32 @@ public sealed class PublishPackageTask : AsyncFrostingTask<BuildContext>
             }
         }
 
-        // Generate Project
-        var projectData = await ReadEmbeddedResourceAsync("MonoGame.Library.X.txt");
-        projectData = projectData.Replace("{X}", context.PackContext.LibraryName);
-        projectData = projectData.Replace("{LicencePath}", context.PackContext.LicensePath);
+        var description = $"This package contains native libraries for {context.PackContext.LibraryName} built for usage with MonoGame.";
+        
+        var readMeName = "README.md";
+        var readMePath = $"{projectDir}/{readMeName}";
 
-        if (context.PackContext.LicensePath.EndsWith(".txt"))
-            projectData = projectData.Replace("{LicenceName}", "LICENSE.txt").Replace("{LicencePackagePath}", "LICENSE.txt");
-        else if (context.PackContext.LicensePath.EndsWith(".md"))
-            projectData = projectData.Replace("{LicenceName}", "LICENSE.md").Replace("{LicencePackagePath}", "LICENSE.md");
-        else
-            // https://learn.microsoft.com/en-us/nuget/reference/errors-and-warnings/nu5030#issue
-            projectData = projectData.Replace("{LicenceName}", "LICENSE").Replace("{LicencePackagePath}", "");
+        var licensePath = context.PackContext.LicensePath;
+        var licenseName = "LICENSE";
+
+        if (licensePath.EndsWith(".txt")) licenseName += ".txt";
+        else if (licensePath.EndsWith(".md")) licenseName += ".md";
 
         var librariesToInclude = from rid in downloadedRids from filePath in Directory.GetFiles($"runtimes/{rid}/native")
             select $"<Content Include=\"{filePath}\"><PackagePath>runtimes/{rid}/native</PackagePath></Content>";
-        projectData = projectData.Replace("{LibrariesToInclude}", string.Join(Environment.NewLine, librariesToInclude));
+        
+        // Generate Project
+        var projectData = await ReadEmbeddedResourceAsync("MonoGame.Library.X.txt");
+        projectData = projectData.Replace("{X}", context.PackContext.LibraryName)
+                                 .Replace("{Description}", description)
+                                 .Replace("{LicensePath}", context.PackContext.LicensePath)
+                                 .Replace("{ReadMePath}", readMeName)
+                                 .Replace("{LicenseName}", licenseName)
+                                 .Replace("{ReadMeName}", readMeName)
+                                 .Replace("{LibrariesToInclude}", string.Join(Environment.NewLine, librariesToInclude));
 
         await File.WriteAllTextAsync($"MonoGame.Library.{context.PackContext.LibraryName}.csproj", projectData);
+        await File.WriteAllTextAsync(readMePath, description);
         await SaveEmbeddedResourceAsync("Icon.png", "Icon.png");
 
         // Build
