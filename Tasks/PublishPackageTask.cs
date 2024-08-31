@@ -79,7 +79,7 @@ public sealed class PublishPackageTask : AsyncFrostingTask<BuildContext>
         var description = $"This package contains native libraries for {context.PackContext.LibraryName} built for usage with MonoGame.";
         
         var readMeName = "README.md";
-        var readMePath = $"{projectDir}/{readMeName}";
+        var readMePath = $"{readMeName}";
 
         var licensePath = context.PackContext.LicensePath;
         var licenseName = "LICENSE";
