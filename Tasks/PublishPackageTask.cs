@@ -38,7 +38,9 @@ public sealed class PublishPackageTask : AsyncFrostingTask<BuildContext>
                 "osx-arm64"
             };
         var optionalRids = new string[] {
-                "ios",
+                "ios-arm64",
+                "iossimulator-x64",
+                "iossimulator-arm64",
                 "android-arm64",
                 "android-arm",
                 "android-x86",
