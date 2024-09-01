@@ -8,6 +8,7 @@
     <PackageIcon>Icon.png</PackageIcon>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <PackageLicenseFile>{LicenseName}</PackageLicenseFile>
+    <PackageReadMeFile>{ReadMeName}</PackageReadMeFile>
     <EnableDefaultItems>false</EnableDefaultItems>
   </PropertyGroup>
 
