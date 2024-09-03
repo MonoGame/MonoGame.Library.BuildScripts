@@ -12,8 +12,12 @@ public sealed class PublishLibraryTask : AsyncFrostingTask<BuildContext>
     public override async Task RunAsync(BuildContext context)
     {
         var knownRids = new string[] {
-            "windows-x64",
+            "win-x64",
+            "win-x86",
+            "win-arm64",
             "linux-x64",
+            "linux-arm",
+            "linux-arm64",
             "osx",
             "osx-x64",
             "osx-arm64",
@@ -41,7 +45,7 @@ public sealed class PublishLibraryTask : AsyncFrostingTask<BuildContext>
 
         var rid = "";
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            rid = "windows";
+            rid = "win";
         else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             rid = "osx";
         else

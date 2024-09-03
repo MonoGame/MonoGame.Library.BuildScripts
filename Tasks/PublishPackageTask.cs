@@ -27,12 +27,12 @@ public sealed class PublishPackageTask : AsyncFrostingTask<BuildContext>
         var requiredRids = context.IsUniversalBinary ?
             new string[]
             {
-                "windows-x64",
+                "win-x64",
                 "linux-x64",
                 "osx",
             } 
             : new string[] {
-                "windows-x64",
+                "win-x64",
                 "linux-x64",
                 "osx-x64",
                 "osx-arm64"
@@ -44,7 +44,9 @@ public sealed class PublishPackageTask : AsyncFrostingTask<BuildContext>
                 "android-arm64",
                 "android-arm",
                 "android-x86",
-                "android-x64"
+                "android-x64",
+                "linux-arm",
+                "linux-arm64",
         };
 
         // Download built artifacts
