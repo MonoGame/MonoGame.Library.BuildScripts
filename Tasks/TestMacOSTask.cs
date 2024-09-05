@@ -8,7 +8,7 @@ public sealed class TestMacOSTask : FrostingTask<BuildContext>
 
     public override void Run(BuildContext context)
     {
-        foreach (var filePath in Directory.GetFiles(context.ArtifactsDir))
+        foreach (var filePath in Directory.GetFiles(context.ArtifactsDir, "*", SearchOption.AllDirectories))
         {
             context.Information($"Checking: {filePath}");
             context.StartProcess(
