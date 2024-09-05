@@ -7,12 +7,14 @@
     <Description>This package contains binaries for {X} library built for usage with MonoGame.</Description>
     <PackageIcon>Icon.png</PackageIcon>
     <IncludeBuildOutput>false</IncludeBuildOutput>
-    <PackageLicenseFile>{LicenceName}</PackageLicenseFile>
+    <PackageLicenseFile>{LicenseName}</PackageLicenseFile>
+    <PackageReadMeFile>{ReadMeName}</PackageReadMeFile>
     <EnableDefaultItems>false</EnableDefaultItems>
   </PropertyGroup>
 
   <ItemGroup>
-      <None Include="{LicencePath}" Pack="true" PackagePath="{LicencePackagePath}" />
+      <None Include="{LicensePath}" Pack="true" PackagePath="" />
+      <None Include="{ReadMePath}" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>
