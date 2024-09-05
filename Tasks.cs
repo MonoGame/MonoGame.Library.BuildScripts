@@ -8,6 +8,7 @@ public class BuildLibraryTask : FrostingTask { }
 [IsDependentOn(typeof(TestWindowsTask))]
 [IsDependentOn(typeof(TestMacOSTask))]
 [IsDependentOn(typeof(TestLinuxTask))]
+[IsDependentOn(typeof(TestAndroidTask))]
 public class TestLibraryTask : FrostingTask { }
 
 [TaskName("Default")]
