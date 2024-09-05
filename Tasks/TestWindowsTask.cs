@@ -17,7 +17,8 @@ public sealed class TestWindowsTask : FrostingTask<BuildContext>
         "VERSION.dll",
         "ADVAPI32.dll",
         "SETUPAPI.dll",
-        "SHELL32.dll"
+        "SHELL32.dll",
+        "AVRT.dll"
     };
 
     public override bool ShouldRun(BuildContext context) => context.IsRunningOnWindows();

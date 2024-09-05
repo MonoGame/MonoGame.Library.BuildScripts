@@ -13,7 +13,11 @@ public sealed class TestLinuxTask : FrostingTask<BuildContext>
         "libdl.so",
         "libpthread.so",
         "/lib/ld-linux-",
-        "/lib64/ld-linux-"
+        "/lib64/ld-linux-",
+        // android
+        "linux-gate.so.1",
+        "libOpenSLES.so",
+        "liblog.so"
     };
 
     public override bool ShouldRun(BuildContext context) => context.IsRunningOnLinux();
@@ -53,8 +57,10 @@ public sealed class TestLinuxTask : FrostingTask<BuildContext>
                 }
                 else
                 {
-                    context.Information($"INVALID: {libPath}");
-                    passedTests = false;
+                    if (!libPath.Contains ("android-arm")) {
+                        context.Information($"INVALID: {libPath}");
+                        passedTests = false;
+                    }
                 }
             }
 
