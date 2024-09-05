@@ -32,7 +32,7 @@ public sealed class TestAndroidTask : FrostingTask<BuildContext>
         string readelf = string.Empty;
         var files = Directory.GetFiles (System.IO.Path.Combine(ndk, "toolchains/llvm/prebuilt"), "llvm-readelf", SearchOption.AllDirectories);
         if (files.Length > 0) {
-            readelf = files.First (l => l == "llvm-readelf");
+            readelf = files.First (l => l.EndsWith ("llvm-readelf"));
         }
         if (string.IsNullOrEmpty (readelf)) {
             context.Information($"SKIP: could not find llvm-readelf");
