@@ -81,7 +81,7 @@ public sealed class TestMacOSTask : FrostingTask<BuildContext>
                 context.Information($"ARCHITECTURE: arm64");
             }
 
-            if (context.IsUniversalBinary && !(arm64 && x86_64))
+            if (context.IsUniversalBinary && filePath.Contains ("osx") && !(arm64 && x86_64))
             {
                 context.Information($"INVALID universal binary");
                 throw new Exception("An universal binary hasn't been generated!");
