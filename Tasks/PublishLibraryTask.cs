@@ -37,8 +37,10 @@ public sealed class PublishLibraryTask : AsyncFrostingTask<BuildContext>
             }
         }
 
-        foreach (var r in availableRids)
+        foreach (var r in availableRids) {
+            context.Information($"Uploading: {context.ArtifactsDir}/{r} to artifacts-{r}");
             await context.BuildSystem().GitHubActions.Commands.UploadArtifact(DirectoryPath.FromString($"{context.ArtifactsDir}/{r}"), $"artifacts-{r}");
+        }
 
         if (availableRids.Any ())
             return;
@@ -58,6 +60,7 @@ public sealed class PublishLibraryTask : AsyncFrostingTask<BuildContext>
                 _ => "-x64",
             };
         }
+        context.Information($"Uploading: {context.ArtifactsDir} to artifacts-{rid}");
         await context.BuildSystem().GitHubActions.Commands.UploadArtifact(DirectoryPath.FromString(context.ArtifactsDir), $"artifacts-{rid}");
     }
 }
