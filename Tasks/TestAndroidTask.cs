@@ -1,8 +1,8 @@
 
 namespace BuildScripts;
 
-[TaskName("Test Linux")]
-public sealed class TestLinuxTask : FrostingTask<BuildContext>
+[TaskName("Test Android")]
+public sealed class TestAndroidTask : FrostingTask<BuildContext>
 {
     private static readonly string[] ValidLibs = {
         "linux-vdso.so",
@@ -14,22 +14,39 @@ public sealed class TestLinuxTask : FrostingTask<BuildContext>
         "libpthread.so",
         "/lib/ld-linux-",
         "/lib64/ld-linux-",
+        "linux-gate.so.1",
+        "libOpenSLES.so",
+        "liblog.so"
     };
 
     public override bool ShouldRun(BuildContext context) => context.IsRunningOnLinux();
 
     public override void Run(BuildContext context)
     {
-        var rootFiles = Directory.GetFiles(context.ArtifactsDir);
-        var linuxFiles = Directory.GetFiles(context.ArtifactsDir, "linux-*", SearchOption.AllDirectories);
-        foreach (var filePath in rootFiles.Union (linuxFiles))
+        var ndk = System.Environment.GetEnvironmentVariable ("ANDROID_NDK_HOME");
+        if (string.IsNullOrEmpty (ndk)) {
+            context.Information($"SKIP: no ANDROID_NDK+HOME found.");
+            return;
+        }
+        ///toolchains/llvm/prebuilt/*/bin/lld
+        string readelf = string.Empty;
+        var files = Directory.GetFiles (System.IO.Path.Combine(ndk, "toolchains/llvm/prebuilt"), "llvm-readelf", SearchOption.AllDirectories);
+        if (files.Length > 0) {
+            readelf = files.First (l => l.EndsWith ("llvm-readelf"));
+        }
+        if (string.IsNullOrEmpty (readelf)) {
+            context.Information($"SKIP: could not find llvm-readelf");
+            return;
+        }
+
+        foreach (var filePath in Directory.GetFiles(context.ArtifactsDir, "android-*", SearchOption.AllDirectories))
         {
             context.Information($"Checking: {filePath}");
             context.StartProcess(
-                "ldd",
+                readelf,
                 new ProcessSettings
                 {
-                    Arguments = $"{filePath}",
+                    Arguments = $"--needed-libs {filePath}",
                     RedirectStandardOutput = true
                 },
                 out IEnumerable<string> processOutput);
@@ -37,7 +54,9 @@ public sealed class TestLinuxTask : FrostingTask<BuildContext>
             var passedTests = true;
             foreach (var line in processOutput)
             {
-                var libPath = line.Trim().Split(' ')[0];
+                if (line.Contains('[') || line.Contains(']'))
+                    continue;
+                var libPath = line.Trim();
 
                 var isValidLib = false;
                 foreach (var validLib in ValidLibs)
