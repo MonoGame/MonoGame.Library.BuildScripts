@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <RunWorkingDirectory>$(MSBuildProjectDirectory)</RunWorkingDirectory>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -37,9 +37,9 @@
 
   <ItemGroup>
     <PackageReference Include="Cake.FileHelpers" Version="7.0.0" />
-    <PackageReference Include="Cake.Frosting" Version="4.0.0" />
-    <PackageReference Include="NuGet.Packaging" Version="6.10.1" />
-    <PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
+    <PackageReference Include="Cake.Frosting" Version="5.0.0" />
+    <PackageReference Include="NuGet.Packaging" Version="6.12.1" />
+    <PackageReference Include="System.Formats.Asn1" Version="9.0.0" />
   </ItemGroup>
 
 </Project>
