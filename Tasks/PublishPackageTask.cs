@@ -86,12 +86,9 @@ public sealed class PublishPackageTask : AsyncFrostingTask<BuildContext>
         var readMePath = $"{readMeName}";
 
         var licensePath = context.PackContext.LicensePath;
-        var licenseName = "LICENSE";
+		var licenseName = System.IO.Path.GetFileName(licensePath);
 
-        if (licensePath.EndsWith(".txt")) licenseName += ".txt";
-        else if (licensePath.EndsWith(".md")) licenseName += ".md";
-
-        var librariesToInclude = from rid in downloadedRids from filePath in Directory.GetFiles($"runtimes/{rid}/native")
+		var librariesToInclude = from rid in downloadedRids from filePath in Directory.GetFiles($"runtimes/{rid}/native")
             select $"<Content Include=\"{filePath}\"><PackagePath>runtimes/{rid}/native</PackagePath></Content>";
         
         // Generate Project
