@@ -13,6 +13,7 @@ public sealed class PublishLibraryTask : AsyncFrostingTask<BuildContext>
     {
         var knownRids = new string[] {
             "win-x64",
+            "win-arm64",
             "win-x86",
             "win-arm64",
             "linux-x64",
