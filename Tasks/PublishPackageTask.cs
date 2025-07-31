@@ -47,6 +47,7 @@ public sealed class PublishPackageTask : AsyncFrostingTask<BuildContext>
                 "android-x64",
                 "linux-arm",
                 "linux-arm64",
+                "win-arm64",
         };
 
         // Download built artifacts
