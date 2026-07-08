@@ -21,7 +21,29 @@ public sealed class TestWindowsTask : FrostingTask<BuildContext>
         "AVRT.dll"
     };
 
+    private static readonly string[] ValidLibPrefixes = {
+        "api-ms-win-",
+        "ext-ms-win-"
+    };
+
     public override bool ShouldRun(BuildContext context) => context.IsRunningOnWindows();
+
+    private static bool IsValidLib(string libPath)
+    {
+        foreach (var validLib in ValidLibs)
+        {
+            if (string.Equals(validLib, libPath, StringComparison.OrdinalIgnoreCase))
+                return true;
+        }
+
+        foreach (var validLibPrefix in ValidLibPrefixes)
+        {
+            if (libPath.StartsWith(validLibPrefix, StringComparison.OrdinalIgnoreCase))
+                return true;
+        }
+
+        return false;
+    }
 
     public override void Run(BuildContext context)
     {
@@ -48,7 +70,7 @@ public sealed class TestWindowsTask : FrostingTask<BuildContext>
                 if (!libPath.EndsWith(".dll") || libPath.Contains(' '))
                     continue;
                     
-                if (ValidLibs.Contains(libPath))
+                if (IsValidLib(libPath))
                 {
                     context.Information($"VALID: {libPath}");
                 }
