@@ -27,7 +27,12 @@ public static class ProcessDockerExtensions
         return false;
     }
 
-    public static int StartProcessWithDocker(this BuildContext context,  string command, string workingDirectory, ProcessArgumentBuilder args, string volumeMount = "")
+    public static int StartProcessWithDocker(this BuildContext context,  string command, ProcessSettings processSettings, string volumeMount = "")
+    {
+        return StartProcessWithDocker(context, command, processSettings.WorkingDirectory.FullPath, processSettings.Arguments, processSettings.EnvironmentVariables, volumeMount);
+    }
+
+    public static int StartProcessWithDocker(this BuildContext context,  string command, string workingDirectory, ProcessArgumentBuilder args, IDictionary<string, string> envVariables, string volumeMount = "")
     {
         var useDocker = UseDocker(context);
         if (useDocker)
@@ -39,9 +44,19 @@ public static class ProcessDockerExtensions
             }
             args.Prepend(command);
             args.Prepend(RuntimeInformation.ProcessArchitecture == Architecture.Arm64 ? DOCKERIMAGE_ARM64 : DOCKERIMAGE_X64);
-            args.Prepend(workdir);
+            if (envVariables is not null)
+            {
+                foreach (var environmentVariable in envVariables)
+                {
+                    args.PrependSwitchQuoted(
+                        "--env",
+                        " ",
+                        $"{environmentVariable.Key}={environmentVariable.Value}");
+                }
+            }
+            args.PrependQuoted(workdir);
             args.Prepend("-w");
-            args.Prepend($"{System.IO.Path.GetFullPath(".")}:/src");
+            args.PrependQuoted($"{System.IO.Path.GetFullPath(".")}:/src");
             args.Prepend("-v");
             args.Prepend("run");
             command = "docker";
@@ -50,6 +65,7 @@ public static class ProcessDockerExtensions
             Arguments = args,
             WorkingDirectory = workingDirectory,
             NoWorkingDirectory = useDocker,
+            EnvironmentVariables = useDocker ? null : envVariables,
         };
         return context.StartProcess(command, settings);
     }
@@ -59,7 +75,9 @@ public static class ProcessDockerExtensions
         var useDocker = UseDocker(context);
         if (useDocker)
         {
-            return directoryPath;
+            var path = System.IO.Path.GetFullPath(directoryPath.FullPath);
+            var relativePath = System.IO.Path.GetRelativePath(System.IO.Path.GetFullPath("."), path);
+            return new DirectoryPath($"/src/{relativePath}");
         }
         return context.MakeAbsolute(directoryPath);
     }
